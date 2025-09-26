@@ -63,7 +63,7 @@ Abra no navegador: http://localhost/crud-mundo/
 
 ---
 
-7. ## Estrutura do Projeto
+## Estrutura do Projeto
 
   ├── frontend/  
   │   └── (Páginas HTML, arquivos CSS e JS do cliente.)  
