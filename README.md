@@ -61,6 +61,8 @@ $db_name = 'bd_mundo';
   
 Abra no navegador: http://localhost/crud-mundo/  
 
+---
+
 7. ## Estrutura do Projeto
 
   ├── frontend/  
