@@ -72,3 +72,10 @@ Abra no navegador: http://localhost/crud-mundo/
   ├── database/  
   │   └── bd_mundo.sql (Script SQL para criação das tabelas.)  
   └── README.md  
+---
+
+---
+## Créditos
+
+- **Desenvolvido por:** Hillary Medeiros  
+- **Globo 3D:** Adaptado de [WebGL Earth (turban/webgl-earth)](https://github.com/turban/webgl-earth)
