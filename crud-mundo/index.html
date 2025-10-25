@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Mundo - Hillary Medeiros</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="//cdn.jsdelivr.net/npm/globe.gl"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <h2>Hillary Medeiros</h2>
+            </div>
+            <div class="navbar-menu">
+                <div class="dropdown">
+                    <button class="dropdown-btn">Cadastrar ▼</button>
+                    <div class="dropdown-content">
+                        <a href="#">Cadastrar País</a>
+                        <a href="#">Cadastrar Cidade</a>
+                    </div>
+                </div>
+                <a href="#" class="nav-link">Visualizar Todos</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="hero-section">
+            <h1 class="main-title">CRUD MUNDO</h1>
+            <div class="globe-container">
+                <div id="globeViz"></div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>
