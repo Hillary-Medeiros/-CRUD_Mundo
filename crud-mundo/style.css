@@ -17,6 +17,44 @@ body {
     -ms-user-select: none;
 }
 
+/* Estrelas de fundo */
+/* Céu estrelado fixo e limpo */
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 998;
+  background: transparent;
+}
+
+/* Gerar estrelas pontuais aleatórias */
+/* Fundo estrelado fixo */
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 998;
+}
+
+.stars span {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  opacity: 0.9;
+}
+
+/*aqui acaba as estrelas*/
+
 /* Container do globo */
 #globeViz {
     position: relative;
@@ -25,24 +63,6 @@ body {
     z-index: 1;
 }
 
-/* Fundo estrelado */
-.stars {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    background: transparent;
-    overflow: hidden;
-    z-index: 0;
-}
-
-/* Estrelas individuais */
-.star {
-    position: absolute;
-    background: white;
-    border-radius: 50%;
-    opacity: 0.8;
-    animation: twinkle 5s infinite ease-in-out alternate;
-}
 
 /* Animação das estrelas */
 @keyframes twinkle {
@@ -203,9 +223,9 @@ body {
 /* Globe Container - Especificações Atualizadas */
 .globe-container {
     position: absolute;
-    width: 120%;
-    height: 130vh; /* Altura maior para globo mais visível */
-    bottom: -50%; /* Posição para manter o efeito de corte na parte inferior */
+    width: 150%;     /* antes: 120% */
+    height: 160vh;   /* antes: 130vh */
+    bottom: -70%; /* Posição para manter o efeito de corte na parte inferior */
     left: 50%;
     transform: translateX(-50%);
     z-index: 1;
@@ -305,6 +325,8 @@ body {
 }
 
 
+
+
 /* Fontes Personalizadas */
 @font-face {
     font-family: 'Sterion';
@@ -319,4 +341,5 @@ body {
     font-weight: normal;
     font-style: italic;
 }
+
 
