@@ -30,3 +30,8 @@ INSERT INTO Continente (nome_Continente) VALUES
 ('Europa'),
 ('Oceania'),
 ('Antártida');
+
+ALTER TABLE Pais
+ADD COLUMN capital_Pais VARCHAR(100) NULL,
+ADD COLUMN moeda_Pais VARCHAR(100) NULL,
+ADD COLUMN bandeira_Pais_url VARCHAR(255) NULL;

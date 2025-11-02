@@ -1,40 +1,195 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="utf-8">
-    <title>Cadastrar País</title>
-    <link rel="stylesheet" href="forms.css"> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Mundo - Cadastro País</title>
+    <link rel="stylesheet" href="forms.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="//cdn.jsdelivr.net/npm/globe.gl"></script>
 </head>
 <body>
-    <h1>Cadastrar País</h1>
+    <!-- Fundo de estrelas -->
+    <div class="stars"></div>
 
-    <form method="post" action="Cadastrar_Pais.php">
-        
-        <label for="nome_Pais">Nome do País</label>
-        <input type="text" id="nome_Pais" name="nome_Pais" maxlength="100" required>
-
-        <label for="populacao_Pais">População </label>
-        <input type="text" id="populacao_Pais" name="populacao_Pais" maxlength="20" required>
-                
-        <label for="idioma_Pais">Idioma Oficial</label>
-        <input type="text" id="idioma_Pais" name="idioma_Pais" maxlength="100" required>
-
-        <label for="id_Continente">Continente</label>
-        <select id="id_Continente" name="id_Continente" required>
-            <option value="">-- selecione um continente --</option> 
-            
-            <option value="1">América do Sul</option>
-            <option value="2">Europa</option>
-            <option value="3">Ásia</option>
-            <option value="4">África</option>
-            <option value="5">Oceania</option>
-        </select>
-
-        <div class="botoes">
-            <button type="submit">Cadastrar País</button>
-            <a href="Cadastrar_Cidade.php">Cadastrar Cidade</a>
-            <button type="button" onclick="window.history.back();">Voltar</button>
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <a href="index.html" style="text-decoration: none;"><h2>Hillary Medeiros</h2></a>
+            </div>
+            <div class="navbar-menu">
+                <div style="display:flex; align-items:center; gap:16px;">
+                    <a href="frmCidade.html" class="nav-link" style="padding:8px 12px; display:inline-block;">Cadastrar Cidade</a>
+                    <div class="dropdown" style="position:relative;">
+                        <button class="dropdown-btn" style="padding:8px 12px;">Visualizar ▼</button>
+                        <div class="dropdown-content" style="position:absolute; top:100%; left:0; margin-top:8px;">
+                            <a href="Visualizar_Paises.html">Países</a>
+                            <a href="Visualizar.html">Cidades</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </form>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="hero-section">
+            <h1 class="main-title">Cadastrar País</h1>
+
+            <!-- Formulário -->
+            <form id="formPais" class="form-cadastro">
+                <div class="form-group">
+                    <label for="nome_Pais">Nome do País</label>
+                    <input type="text" id="nome_Pais" name="nome_Pais" required placeholder="Digite o nome do país">
+                </div>
+
+                <div class="form-group">
+                    <label for="populacao_Pais">População</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-adjust" id="decrease"><i class="bi bi-dash"></i></button>
+                        <input type="number" id="populacao_Pais" name="populacao_Pais" required placeholder="Ex: 100000000" min="0" step="1" value="0">
+                        <button type="button" class="btn-adjust" id="increase"><i class="bi bi-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="idioma_Pais">Idioma</label>
+                    <input type="text" id="idioma_Pais" name="idioma_Pais" required placeholder="Digite o idioma principal">
+                </div>
+
+                <div class="form-group">
+                    <label for="id_Continente">Continente</label>
+                    <select id="id_Continente" name="id_Continente" required>
+                        <option value="">Carregando continentes...</option> 
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn-enviar">Cadastrar</button>
+            </form>
+
+            <div class="globe-container">
+                <div id="globeViz"></div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="main.js"></script>
+
+    <script>
+        // Carregar continentes
+        async function carregarContinentes() {
+            try {
+                const response = await fetch("Cadastrar_Pais.php?action=continentes");
+                const continentes = await response.json();
+
+                const select = document.getElementById("id_Continente");
+                select.innerHTML = '<option value="">Selecione o continente</option>';
+
+                continentes.forEach(cont => {
+                    const option = document.createElement("option");
+                    option.value = cont.id_Continente;
+                    option.textContent = cont.nome_Continente;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Erro ao carregar continentes:", error);
+                const select = document.getElementById("id_Continente");
+                select.innerHTML = '<option value="">Erro ao carregar continentes</option>';
+            }
+        }
+
+        // Função para buscar dados complementares do país pela API Rest Countries
+        async function buscarDadosPais() {
+            const nomePais = document.getElementById('nome_Pais').value.trim();
+            
+            if (!nomePais) {
+                // Limpar campos se o nome estiver vazio
+                document.getElementById('capital_Pais').value = '';
+                document.getElementById('moeda_Pais').value = '';
+                document.getElementById('bandeira_Pais').value = '';
+                document.getElementById('bandeira_Pais_img').style.display = 'none';
+                return;
+            }
+
+            try {
+                // Chamar a API Rest Countries via um endpoint PHP (ou diretamente)
+                const response = await fetch(`Cadastrar_Pais.php?action=dados_pais&pais=${encodeURIComponent(nomePais)}`);
+                
+                if (!response.ok) {
+                    throw new Error('Falha ao buscar dados do país');
+                }
+
+                const data = await response.json();
+
+                if (data.erro) {
+                    console.warn('Aviso:', data.erro);
+                    // Não limpar os campos, apenas avisar no console
+                } else {
+                    // Preencher os campos com os dados retornados
+                    document.getElementById('capital_Pais').value = data.capital || '';
+                    document.getElementById('moeda_Pais').value = data.currency_name + ' (' + data.currency_code + ')' || '';
+                    document.getElementById('bandeira_Pais').value = data.flag_url || '';
+                    
+                    // Exibir a bandeira
+                    if (data.flag_url) {
+                        const img = document.getElementById('bandeira_Pais_img');
+                        img.src = data.flag_url;
+                        img.style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados do país:', error);
+                // Não mostrar alerta para não incomodar o usuário
+            }
+        }
+
+        // Adicionar evento de blur no campo de nome do país para buscar dados
+        document.getElementById('nome_Pais').addEventListener('blur', buscarDadosPais);
+        document.getElementById('nome_Pais').addEventListener('change', buscarDadosPais);
+
+        // enviar formulário pro php
+        document.getElementById("formPais").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            const response = await fetch("Cadastrar_Pais.php", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.text();
+            alert(result);
+            e.target.reset();
+            // Limpar campos de dados complementares
+            document.getElementById('capital_Pais').value = '';
+            document.getElementById('moeda_Pais').value = '';
+            document.getElementById('bandeira_Pais').value = '';
+            document.getElementById('bandeira_Pais_img').style.display = 'none';
+        });
+
+        // Adicionar endpoint para buscar dados do país (será adicionado ao Cadastrar_Pais.php)
+
+        // btn + e -
+        const input = document.getElementById('populacao_Pais');
+        const increase = document.getElementById('increase');
+        const decrease = document.getElementById('decrease');
+
+        increase.addEventListener('click', () => {
+            input.value = parseInt(input.value || 0) + 100000;
+        });
+
+        decrease.addEventListener('click', () => {
+            let value = parseInt(input.value || 0);
+            if (value > 0) input.value = value - 100000;
+        });
+
+        // Adicionar endpoint para buscar dados do país na API Rest Countries
+        // Este endpoint será adicionado ao Cadastrar_Pais.php
+
+        carregarContinentes();
+    </script>
 </body>
 </html>

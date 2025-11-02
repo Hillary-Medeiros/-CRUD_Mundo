@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Mundo - Visualizar Países</title>
+    <link rel="stylesheet" href="forms.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="//cdn.jsdelivr.net/npm/globe.gl"></script>
+</head>
+<body>
+    <!-- Fundo de estrelas -->
+    <div class="stars"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <a href="index.html" style="text-decoration: none;"><h2>Hillary Medeiros</h2></a>
+            </div>
+            <div class="navbar-menu">
+                <a href="frmCidade.html" class="nav-link">Cadastrar Cidade</a>
+                <a href="frmPais.html" class="nav-link">Cadastrar País</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="hero-section">
+            <h1 class="main-title">Visualizar Países</h1>
+            <a href="Visualizar.html" class="nav-link" style="z-index: 999; display: inline-block; padding: 10px 20px; font-size: 20px; border-radius: 8px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); color: #fff; text-decoration: none; transition: 0.3s;">
+            Visualizar Cidades ▶︎</a>
+            <div id="tabelaContainer" class="table-container" style="z-index: 999;">
+                <table id="tabelaPaises">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>País</th>
+                            <th>Bandeira</th>
+                            <th>Capital</th>
+                            <th>Moeda</th>
+                            <th>População</th>
+                            <th>Idioma</th>
+                            <th>Continente</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="8">Carregando países...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="globe-container">
+                <div id="globeViz"></div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="main.js"></script>
+
+    <script>
+        async function carregarPaises() {
+            const tbody = document.querySelector("#tabelaPaises tbody");
+            tbody.innerHTML = "<tr><td colspan='8'>Carregando países...</td></tr>";
+
+            try {
+                const response = await fetch("Visualizar_Paises.php");
+                if (!response.ok) {
+                    let erroDetalhe = `Status HTTP: ${response.status}`;
+                    try {
+                        const erroData = await response.json();
+                        erroDetalhe = erroData.erro || erroDetalhe;
+                    } catch (e) {
+                        erroDetalhe = `Status HTTP: ${response.status}. Resposta inválida (Verifique o log do servidor).`;
+                    }
+                    
+                    throw new Error(`Falha ao carregar dados. ${erroDetalhe}`);
+                }
+                
+                const paises = await response.json();
+                tbody.innerHTML = ""; // limpa a tabela antes de preencher
+
+                if (!Array.isArray(paises) || paises.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='8'>Nenhum país cadastrado.</td></tr>";
+                    return;
+                }
+
+                paises.forEach(pais => {
+                    const row = document.createElement("tr");
+                    const populacaoFormatada = new Intl.NumberFormat('pt-BR').format(pais.populacao_Pais); //formata a popuação
+                    // espaçço para a bandeira
+                    const bandeiraHtml = pais.bandeira_Pais 
+                        ? `<img src="${pais.bandeira_Pais}" alt="Bandeira" style="width: 40px; height: 30px; border: 1px solid #ccc; object-fit: cover;">`
+                        : 'N/A';
+
+                    row.innerHTML = `
+                        <td>${pais.id_Pais}</td>
+                        <td>${pais.nome_Pais}</td>
+                        <td>${bandeiraHtml}</td>
+                        <td>${pais.capital_Pais || 'N/A'}</td>
+                        <td>${pais.moeda_Pais || 'N/A'}</td>
+                        <td>${populacaoFormatada}</td>
+                        <td>${pais.idioma_Pais}</td>
+                        <td>${pais.nome_Continente}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error("Erro ao carregar países:", error);
+                
+                let errorMessage = "Erro ao carregar países.";
+                if (error.message) {
+                    errorMessage = error.message; 
+                }
+
+                tbody.innerHTML = `<tr><td colspan='8'>${errorMessage}</td></tr>`;
+            }
+        }
+
+        carregarPaises();
+    </script>
+</body>
+</html>

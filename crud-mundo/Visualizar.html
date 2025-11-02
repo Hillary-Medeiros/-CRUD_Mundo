@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Mundo - Visualizar Cidades</title>
+    <link rel="stylesheet" href="forms.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="//cdn.jsdelivr.net/npm/globe.gl"></script>
+</head>
+<body>
+    <!-- Fundo de estrelas -->
+    <div class="stars"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <a href="index.html" style="text-decoration: none;"><h2>Hillary Medeiros</h2></a>
+            </div>
+            <div class="navbar-menu">
+                <a href="frmCidade.html" class="nav-link">Cadastrar Cidade</a>
+                <a href="frmPais.html" class="nav-link">Cadastrar País</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+        <div class="hero-section">
+            <h1 class="main-title">Visualizar Cidades</h1>
+            <a href="Visualizar_Paises.html" class="nav-link" style="z-index: 999; display: inline-block; padding: 10px 20px; font-size: 20px; border-radius: 8px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); color: #fff; text-decoration: none; transition: 0.3s;">
+            Visualizar Países ▶︎</a>
+            <div id="tabelaContainer" class="table-container" style="z-index: 999;">
+                <table id="tabelaCidades">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome da Cidade</th>
+                            <th>População</th>
+                            <th>País</th>
+                            <th>Clima</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td colspan="5">Carregando cidades...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="globe-container">
+                <div id="globeViz"></div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="main.js"></script>
+
+    <script>
+        async function carregarCidades() {
+            const tbody = document.querySelector("#tabelaCidades tbody");
+            tbody.innerHTML = "<tr><td colspan='5'>Carregando cidades...</td></tr>"; // Feedback imediato
+
+            try {
+                const response = await fetch("Visualizar.php");
+
+                // --- Ponto Crítico: Verificar status HTTP (200 OK) ---
+                if (!response.ok) {
+                    let erroDetalhe = `Status HTTP: ${response.status}`;
+                    try {
+                        // Tenta ler o JSON de erro (com o detalhe) retornado pelo PHP
+                        const erroData = await response.json();
+                        erroDetalhe = erroData.erro || erroDetalhe;
+                    } catch (e) {
+                        // Resposta não é JSON (erro de servidor mais grave, como falha no 'include')
+                        erroDetalhe = `Status HTTP: ${response.status}. Resposta inválida (Verifique o log do servidor).`;
+                    }
+                    
+                    throw new Error(`Falha ao carregar dados. ${erroDetalhe}`);
+                }
+                
+                const cidades = await response.json();
+
+                tbody.innerHTML = ""; // Limpa o "Carregando"
+
+                if (!Array.isArray(cidades) || cidades.length === 0) {
+                    tbody.innerHTML = "<tr><td colspan='5'>Nenhuma cidade cadastrada.</td></tr>";
+                    return;
+                }
+
+                cidades.forEach(cidade => {
+                    const row = document.createElement("tr");
+                    // Formata a população para o padrão brasileiro (ex: 1.000.000)
+                    const populacaoFormatada = new Intl.NumberFormat('pt-BR').format(cidade.populacao_Cidade);
+                    
+                    row.innerHTML = `
+                        <td>${cidade.id_Cidade}</td>
+                        <td>${cidade.nome_Cidade}</td>
+                        <td>${populacaoFormatada}</td>
+                        <td>${cidade.nome_Pais}</td>
+                        <td id="clima-${cidade.id_Cidade}">Carregando...</td>
+                    `;
+                    tbody.appendChild(row);
+
+                    // Chama a função para buscar o clima
+                    buscarClima(cidade.id_Cidade, cidade.nome_Cidade);
+                });
+            } catch (error) {
+                console.error("Erro ao carregar cidades:", error);
+                
+                let errorMessage = "Erro ao carregar cidades. Verifique o console do navegador.";
+                if (error.message) {
+                    // Exibe a mensagem de erro detalhada na tabela
+                    errorMessage = error.message; 
+                }
+
+                tbody.innerHTML = `<tr><td colspan='5'>${errorMessage}</td></tr>`;
+            }
+        }
+
+        carregarCidades();
+
+        // Função para buscar o clima
+        async function buscarClima(idCidade, nomeCidade) {
+            const climaCell = document.getElementById(`clima-${idCidade}`);
+            climaCell.innerHTML = 'Buscando...';
+
+            try {
+                // Chama o Visualizar.php com o parâmetro de ação para o clima
+                const response = await fetch(`Visualizar.php?action=clima&cidade=${encodeURIComponent(nomeCidade)}`);
+
+                if (!response.ok) {
+                    throw new Error(`Falha ao buscar clima. Status: ${response.status}`);
+                }
+
+                const climaData = await response.json();
+
+                if (climaData.erro) {
+                    climaCell.innerHTML = climaData.erro;
+                    return;
+                }
+
+                // Formatação da temperatura (de Kelvin para Celsius já foi feita no PHP com &units=metric)
+                const temp = parseFloat(climaData.temp).toFixed(1);
+                const descricao = climaData.description.charAt(0).toUpperCase() + climaData.description.slice(1);
+                const iconeUrl = `https://openweathermap.org/img/wn/${climaData.icon}@2x.png`;
+
+                climaCell.innerHTML = `
+                    <img src="${iconeUrl}" alt="${descricao}" style="width: 30px; height: 30px; vertical-align: middle;">
+                    ${temp}°C (${descricao})
+                `;
+
+            } catch (error) {
+                console.error(`Erro ao buscar clima para ${nomeCidade}:`, error);
+                climaCell.innerHTML = 'Clima indisponível';
+            }
+        }
+    </script>
+</body>
+</html>

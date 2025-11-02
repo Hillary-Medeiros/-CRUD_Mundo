@@ -3,539 +3,127 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastrar Cidade - CRUD Mundo</title>
+    <title>CRUD Mundo - Cadastro Cidade</title>
+    <link rel="stylesheet" href="forms.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="//cdn.jsdelivr.net/npm/globe.gl"></script>
-    
-    <style>
-        /* INÍCIO DO CSS DO SEU INDEX */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Sterion', sans-serif;
-            background: #010010;
-            color: white;
-            overflow-x: hidden;
-            user-select: none;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-        }
-
-        /* Estrelas de fundo */
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: 998;
-            background: transparent;
-        }
-
-        .stars span {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
-            border-radius: 50%;
-            opacity: 0.9;
-        }
-
-        /* Container do globo */
-        #globeViz {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            z-index: 1;
-        }
-
-        /* Animação das estrelas (simulada) */
-        @keyframes twinkle {
-            0% { transform: translateY(0) scale(1); opacity: 0.6; }
-            100% { transform: translateY(10px) scale(1.2); opacity: 1; }
-        }
-
-        /* Navbar Styles */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: #010010;
-            z-index: 1000;
-            padding: 1rem 0;
-            box-shadow: none;
-        }
-
-        .navbar-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 2rem;
-        }
-
-        .navbar-brand h2 {
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .navbar-menu {
-            display: flex;
-            align-items: center;
-            gap: 2rem;
-        }
-
-        /* Dropdown Styles */
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-btn {
-            background: #010010;
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-family: 'Sterion', sans-serif;
-            font-weight: 400;
-            transition: all 0.3s ease;
-        }
-
-        .dropdown-btn:hover {
-            background: #1a1e2a;
-            border-color: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            background: #010010;
-            min-width: 180px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-            z-index: 1001;
-            border-radius: 8px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            top: 100%;
-            left: 0;
-            margin-top: 5px;
-        }
-
-        .dropdown:hover .dropdown-content {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .dropdown-content a {
-            color: white;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-            transition: all 0.3s ease;
-            font-family: 'Sterion', sans-serif;
-            font-weight: 300;
-        }
-
-        .dropdown-content a:hover {
-            background: #1a1e2a;
-            color: white;
-        }
-
-        /* Nav-link original (manter o estilo para o link Cadastrar País/Voltar se necessário) */
-        .nav-link {
-            color: white;
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            font-family: 'Sterion', sans-serif;
-            font-weight: 400;
-            background: #010010;
-            display: inline-block; /* Importante para usar como botão */
-        }
-
-        .nav-link:hover {
-            border-color: rgba(255, 255, 255, 0.3);
-            background: #1a1e2a;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Main Content */
-        .main-content {
-            min-height: 100vh;
-            position: relative;
-            display: flex; /* Adicionado para centralizar o formulário */
-            justify-content: center; /* Adicionado para centralizar o formulário */
-            align-items: center; /* Adicionado para centralizar o formulário */
-        }
-
-        .hero-section {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Remove o main-title pois será substituído pelo card */
-        /*
-        .main-title {
-            ...
-        }
-        */
-
-        /* Globe Container - Especificações Atualizadas */
-        .globe-container {
-            position: absolute;
-            width: 150%; 
-            height: 160vh; 
-            bottom: -70%;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 1;
-        }
-
-        #globeViz {
-            width: 100%;
-            height: 100%;
-            display: block;
-            cursor: grab;
-        }
-
-        #globeViz:active {
-            cursor: grabbing;
-        }
-
-        #globeViz canvas {
-            width: 100% !important;
-            height: 100% !important;
-        }
-        
-        /* RESPONSIVIDADE (do seu index) */
-        @media (max-width: 768px) {
-            .navbar-container {
-                padding: 0 1rem;
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .navbar-brand h2 {
-                font-size: 1.2rem;
-            }
-            
-            .navbar-menu {
-                gap: 1rem;
-            }
-            
-            /* Ajusta o card do formulário para dispositivos menores */
-            .form-card {
-                max-width: 90%;
-                padding: 20px;
-                margin-top: 80px; /* Desloca para baixo para não ficar sob a navbar */
-            }
-
-            .form-card h1 {
-                font-size: 2rem;
-            }
-
-            .globe-container {
-                width: 100%;
-                height: 70vh;
-                bottom: -25%;
-            }
-            
-            .dropdown-content {
-                min-width: 150px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            /* .main-title { -> Removido */
-            /* font-size: 2rem; */
-            /* } */
-            
-            .navbar-menu {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-            
-            .globe-container {
-                height: 60vh;
-                bottom: -20%;
-            }
-
-            .form-card h1 {
-                font-size: 1.8rem;
-            }
-
-            .form-card input[type="text"],
-            .form-card select,
-            .form-card button,
-            .form-card a.nav-link {
-                font-size: 0.9rem;
-                padding: 10px;
-            }
-        }
-
-        /* Animação de entrada */
-        /* Aplicado ao card do formulário agora */
-        /* .main-title { -> Removido */
-        /* animation: titleFadeIn 2s ease-out; */
-        /* } */
-
-        @keyframes titleFadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* FONTES (Necessário para usar 'Sterion') */
-        @font-face {
-            font-family: 'Sterion';
-            src: url('./fonts/Sterion-BLLld.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-        }
-
-        @font-face {
-            font-family: 'Sterion';
-            src: url('./fonts/SterionItalic-R99PA.ttf') format('truetype');
-            font-weight: normal;
-            font-style: italic;
-        }
-        
-        /* FIM DO CSS DO SEU INDEX */
-        
-        /* -------------------------------------- */
-        /* CSS ESPECÍFICO DO FORMULÁRIO (CARD) */
-        /* -------------------------------------- */
-        
-        /* Card do Formulário: Estilo similar ao botão 'Visualizar' */
-        .form-card {
-            background: rgba(1, 0, 16, 0.6); 
-            backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 30px;
-            max-width: 450px;
-            width: 90%;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
-            z-index: 10; 
-            text-align: center;
-            animation: titleFadeIn 2s ease-out; 
-            position: relative; 
-        }
-
-        .form-card h1 {
-            font-family: 'Sterion', sans-serif;
-            color: white;
-            font-size: 2.5rem;
-            margin-top: 0;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-        }
-        
-        /* Estilos do formulário */
-        .form-card form {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            gap: 15px;
-        }
-        
-        .form-card label {
-            text-align: left;
-            font-weight: bold;
-            color: white;
-            margin-top: 5px;
-            font-size: 1rem;
-        }
-
-        .form-card input[type="text"],
-        .form-card select {
-            padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            background: rgba(2, 0, 20, 0.8);
-            color: white;
-            font-size: 1rem;
-            width: 100%;
-            box-sizing: border-box;
-            transition: border-color 0.3s, box-shadow 0.3s;
-            font-family: inherit;
-        }
-        
-        .form-card input[type="text"]:focus,
-        .form-card select:focus {
-            border-color: #5d5dff; 
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(93, 93, 255, 0.5);
-        }
-        
-        /* Estilo para botões */
-        .form-card button, 
-        .form-card a.nav-link {
-            padding: 12px;
-            border-radius: 8px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: block;
-            text-align: center;
-            margin-top: 5px;
-        }
-        
-        /* Botão principal de cadastro: Estilo vibrante */
-        .form-card button[type="submit"] {
-            background-color: #5d5dff;
-            color: white;
-            font-weight: bold;
-            border: none;
-        }
-
-        .form-card button[type="submit"]:hover {
-            background-color: #4a4aef;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(93, 93, 255, 0.3);
-        }
-
-        /* Botões secundários (Cadastrar País, Voltar): Usando o estilo nav-link */
-        .form-card a.nav-link,
-        .form-card button[type="button"] {
-            background: #010010;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-        
-        .form-card a.nav-link:hover,
-        .form-card button[type="button"]:hover {
-            background: #1a1e2a;
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-    </style>
 </head>
 <body>
+    <!-- Fundo de estrelas -->
     <div class="stars"></div>
 
+    <!-- NAVBAR -->
     <nav class="navbar">
         <div class="navbar-container">
             <div class="navbar-brand">
-                <h2>Hillary Medeiros</h2>
+                <a href="index.html" style="text-decoration: none;"><h2>Hillary Medeiros</h2></a>
             </div>
             <div class="navbar-menu">
-                <div class="dropdown">
-                    <button class="dropdown-btn">Cadastrar ▼</button>
-                    <div class="dropdown-content">
-                        <a href="frmPais.html">País</a>
-                        <a href="frmCidade.html">Cidade</a>
+                <a href="frmPais.html" class="nav-link">Cadastrar País</a>
+                <div class="dropdown" style="position:relative;">
+                    <button class="dropdown-btn" style="padding:8px 12px;">Visualizar ▼</button>
+                    <div class="dropdown-content" style="position:absolute; top:100%; left:0; margin-top:8px;">
+                        <a href="Visualizar_Paises.html">Países</a>
+                        <a href="Visualizar.html">Cidades</a>
                     </div>
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- MAIN CONTENT --> 
     <main class="main-content">
-        
-        <div class="form-card">
-            <h1>Cadastrar Cidade</h1>
-            <form method="post" action="Cadastrar_Cidade.php">
-                
-                <label for="nome_Cidade">Nome da Cidade</label>
-                <input type="text" id="nome_Cidade" name="nome_Cidade" maxlength="100" required>
+        <div class="hero-section">
+            <h1 class="main-title">Cadastrar Cidade</h1>
 
-                <label for="populacao_Cidade">População</label>
-                <input type="text" id="populacao_Cidade" name="populacao_Cidade" maxlength="20" required>
+            <!-- Formulário -->
+            <form id="formCidade" class="form-cadastro">
+                <div class="form-group">
+                    <label for="nome_Cidade">Nome da Cidade</label>
+                    <input type="text" id="nome_Cidade" name="nome_Cidade" required placeholder="Digite o nome da cidade">
+                </div>
 
-                <label for="id_Pais">País</label>
-                <select id="id_Pais" name="id_Pais" required>
-                    <option value="">Selecione um país</option>
-                    <option value="1">Brasil</option>
-                    <option value="2">Portugal</option>
-                    <option value="3">Japão</option>
-                    <option value="4">Canadá</option>
-                </select>
+                <div class="form-group">
+                    <label for="populacao_Cidade">População</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-adjust" id="decrease"><i class="bi bi-dash"></i></button>
+                        <input type="number" id="populacao_Cidade" name="populacao_Cidade" required placeholder="Ex: 1500000" min="0" step="1" value="0">
+                        <button type="button" class="btn-adjust" id="increase"><i class="bi bi-plus"></i></button>
+                    </div>
+                </div>
 
-                <button type="submit">Cadastrar Cidade</button>
-                <a href="frmPais.html" class="nav-link">Cadastrar País</a>
-                <button type="button" onclick="window.history.back();">Voltar</button>
+                <div class="form-group">
+                    <label for="id_Pais">País</label>
+                    <select id="id_Pais" name="id_Pais" required>
+                        <option value="">Carregando países...</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-enviar">Cadastrar</button>
             </form>
-        </div>
 
-        <div class="globe-container">
-            <div id="globeViz"></div>
+            <div class="globe-container">
+                <div id="globeViz"></div>
+            </div>
         </div>
-
     </main>
 
+    <script type="module" src="main.js"></script>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const starsContainer = document.querySelector('.stars');
-            const numStars = 200; // Número de estrelas
-            const screenWidth = window.innerWidth;
-            const screenHeight = window.innerHeight;
+        // Carregar os países
+        async function carregarPaises() {
+            try {
+                const response = await fetch("Cadastrar_Cidade.php?action=paises");
+                const paises = await response.json();
 
-            for (let i = 0; i < numStars; i++) {
-                const star = document.createElement('span');
-                star.style.left = `${Math.random() * screenWidth}px`;
-                star.style.top = `${Math.random() * screenHeight}px`;
-                star.style.animationDelay = `${Math.random() * 5}s`; // Atraso para a animação de "twinkle"
-                star.style.opacity = `${0.5 + Math.random() * 0.5}`; // Opacidade variada
-                star.style.transform = `scale(${0.5 + Math.random()})`; // Tamanho variado
-                starsContainer.appendChild(star);
+                const select = document.getElementById("id_Pais");
+                select.innerHTML = '<option value="">Selecione o país</option>';
+
+                paises.forEach(pais => {
+                    const option = document.createElement("option");
+                    option.value = pais.id_Pais;
+                    option.textContent = pais.nome_Pais;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Erro ao carregar países:", error);
+                const select = document.getElementById("id_Pais");
+                select.innerHTML = '<option value="">Erro ao carregar países</option>';
             }
+        }
+
+        // enviar formulário pro php
+        document.getElementById("formCidade").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+
+            const response = await fetch("Cadastrar_Cidade.php", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.text();
+            alert(result);
+            e.target.reset();
         });
-    </script>
 
-    <script type="module">
-        const N = 20; // Número de pontos aleatórios no globo
-        const gData = [...Array(N).keys()].map(() => ({
-          lat: (Math.random() - 0.5) * 180,
-          lng: (Math.random() - 0.5) * 360,
-          size: Math.random() / 3,
-          color: ['red', 'white', 'blue', 'green'][Math.round(Math.random() * 3)]
-        }));
-        
-        const Globe = window.Globe; // Acessa a função Globe do script carregado
-        Globe(document.getElementById('globeViz'))
-          .globeImageUrl('//unpkg.com/three-globe/example/img/earth-night.jpg')
-          .pointsData(gData)
-          .pointAltitude('size')
-          .pointColor('color')
-          .backgroundColor('rgba(0,0,0,0)'); // Fundo transparente para ver o fundo estrelado
-        
-        // Ajusta o tamanho do globo na mudança de tamanho da tela
-        window.addEventListener('resize', () => Globe.width(window.innerWidth).height(window.innerHeight));
-    </script>
+        // btn + e -
+        const input = document.getElementById('populacao_Cidade');
+        const increase = document.getElementById('increase');
+        const decrease = document.getElementById('decrease');
 
+        increase.addEventListener('click', () => {
+            input.value = parseInt(input.value || 0) + 1000;
+        });
+
+        decrease.addEventListener('click', () => {
+            let value = parseInt(input.value || 0);
+            if (value > 0) input.value = value - 1000;
+        });
+
+        carregarPaises();
+    </script>
 </body>
 </html>

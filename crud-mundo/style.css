@@ -17,8 +17,7 @@ body {
     -ms-user-select: none;
 }
 
-/* Estrelas de fundo */
-/* Céu estrelado fixo e limpo */
+/* Estrelas*/
 .stars {
   position: fixed;
   top: 0;
@@ -31,8 +30,6 @@ body {
   background: transparent;
 }
 
-/* Gerar estrelas pontuais aleatórias */
-/* Fundo estrelado fixo */
 .stars {
   position: fixed;
   top: 0;
@@ -53,9 +50,7 @@ body {
   opacity: 0.9;
 }
 
-/*aqui acaba as estrelas*/
-
-/* Container do globo */
+/* globo */
 #globeViz {
     position: relative;
     width: 100vw;
@@ -70,8 +65,6 @@ body {
     100% { transform: translateY(10px) scale(1.2); opacity: 1; }
 }
 
-
-/* Navbar Styles */
 .navbar {
     position: fixed;
     top: 0;
@@ -80,7 +73,6 @@ body {
     background: #010010;
     z-index: 1000;
     padding: 1rem 0;
-    /* border-bottom: 1px solid rgba(255, 255, 255, 0.08); */
     box-shadow: none;
 }
 
@@ -106,7 +98,6 @@ body {
     gap: 2rem;
 }
 
-/* Dropdown Styles */
 .dropdown {
     position: relative;
     display: inline-block;
@@ -206,6 +197,10 @@ body {
     overflow: hidden;
 }
 
+.hero-section a.nav-link {
+    margin-top: 2vh; /* empurra o botão um pouco pra baixo */
+}
+
 .main-title {
     font-size: 4rem;
     font-weight: 900;
@@ -217,15 +212,15 @@ body {
     z-index: 10;
     position: relative;
     letter-spacing: 2px;
-    margin-top: -5vh;
+    margin-top: 5vh;
 }
 
-/* Globe Container - Especificações Atualizadas */
+/* mudar tamanho do globo */
 .globe-container {
     position: absolute;
-    width: 150%;     /* antes: 120% */
-    height: 160vh;   /* antes: 130vh */
-    bottom: -70%; /* Posição para manter o efeito de corte na parte inferior */
+    width: 150%;     
+    height: 160vh;  
+    bottom: -70%;
     left: 50%;
     transform: translateX(-50%);
     z-index: 1;
@@ -307,7 +302,6 @@ body {
 }
 
 
-/* Estilos específicos para o globe.gl */
 #globeViz {
     width: 100%;
     height: 100%;
@@ -325,9 +319,7 @@ body {
 }
 
 
-
-
-/* Fontes Personalizadas */
+/* Fonte */
 @font-face {
     font-family: 'Sterion';
     src: url('./fonts/Sterion-BLLld.ttf') format('truetype');
