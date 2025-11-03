@@ -25,44 +25,6 @@ O sistema também consome as seguintes **APIs externas** para enriquecer os dado
 
 ---
 
-## Instalação e Uso
-
-1. **Clone o repositório:**
-   ```bash
-   git clone [https://github.com/seu-usuario/crud-mundo.git](https://github.com/seu-usuario/crud-mundo.git)
-
-2. **Inicie o Servidor:**
-
-Instale e inicie o servidor local (ex.: XAMPP ou WAMP) e ative Apache e MySQL.
-
-3. **Importe o Banco de Dados:**
-   
-    Via phpMyAdmin: [Acesse http://localhost/phpmyadmin e importe o arquivo database/bd_mundo.sql].
-Via Linha de Comando:
-   ```bash
-   mysql -u root -p < database/bd_mundo.sql
-
-4. **Copie os Arquivos:**
-   
-Copie a pasta do projeto (ex.: crud-mundo) para o diretório público do seu servidor:
-  
-  XAMPP: C:\xampp\htdocs\
-
-5. **Ajuste a Conexão:**
-  
-Ajuste as credenciais de conexão no arquivo de configuração (ex.: backend/config.php):  
-  
-$db_host = 'localhost';  
-$db_user = 'root';  
-$db_pass = ''; // Senha do seu MySQL, se houver  
-$db_name = 'bd_mundo';  
-
-6. **Acesse o Projeto:**
-  
-Abra no navegador: http://localhost/crud-mundo/  
-
----
-
 ## Estrutura do Projeto
 
   ├── frontend/  
