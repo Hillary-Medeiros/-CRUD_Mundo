@@ -6,7 +6,7 @@ header("Access-Control-Allow-Origin: *");
 
 // O nome do arquivo incluído é 'Conexão.php' (com acento)
 include("Conexão.php"); 
-include("api_integration.php"); 
+include("IntegracaoApi.php"); 
 
 // --- LÓGICA PARA BUSCAR CLIMA (API OpenWeatherMap) ---
 if (isset($_GET['action']) && $_GET['action'] === 'clima' && isset($_GET['cidade'])) {

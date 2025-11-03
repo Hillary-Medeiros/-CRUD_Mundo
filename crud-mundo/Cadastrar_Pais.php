@@ -1,6 +1,6 @@
 <?php 
 include 'Conexão.php';
-include 'api_integration.php';
+include 'IntegracaoApi.php';
 
 // Buscar na api o nm do pais
 if (isset($_GET['action']) && $_GET['action'] === 'dados_pais' && isset($_GET['pais'])) {
