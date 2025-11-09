@@ -3,7 +3,7 @@
 $localhost = 'localhost';
 $user = 'root';
 $password = ''; 
-$database = 'Crud_Mundo';
+$database = 'crud_mundo';
 
 $mysqli = new mysqli($localhost, $user, $password, $database);
 

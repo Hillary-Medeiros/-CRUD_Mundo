@@ -26,14 +26,24 @@ O sistema também consome as seguintes **APIs externas** para enriquecer os dado
 ---
 
 ## Estrutura do Projeto
-
-  ├── frontend/  
-  │   └── (Páginas HTML, arquivos CSS e JS do cliente.)  
-  ├── backend/  
-  │   └── (Scripts PHP: conexão, controllers, operações CRUD.)  
-  ├── database/  
-  │   └── bd_mundo.sql (Script SQL para criação das tabelas.)  
-  └── README.md  
+CRUD-Mundo/
+├── Banco de dados/      
+│   └── crud_mundo_banco_exportado.sql
+│
+├── Documento/             
+│   └── dicionario_dados.pdf
+│
+├── fonts/                 
+│   └── (arquivos da fonte importada)
+│
+├── src/                     
+│   ├── index.php           
+│   ├── *.php                
+│   ├── *.css               
+│   └── *.js                 
+│
+└── README.md
+ 
 ---
 
 ---
