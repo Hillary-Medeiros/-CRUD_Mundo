@@ -33,14 +33,15 @@ CRUD-Mundo/
 ├── Documento/             
 │   └── dicionario_dados.pdf
 │
-├── fonts/                 
-│   └── (arquivos da fonte importada)
-│
-├── src/                     
-│   ├── index.php           
-│   ├── *.php                
-│   ├── *.css               
-│   └── *.js                 
+├── src/ 
+    ├── CSS/
+    │    ├── fonts/
+    │    │     └── (arquivos fonte importada)
+    ├── js/
+    │    └── *.js   
+    ├── index.html 
+    ├── *.html
+    └── *.php                               
 │
 └── README.md
  
