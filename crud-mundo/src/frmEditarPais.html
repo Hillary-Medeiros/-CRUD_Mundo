@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Mundo - Editar País</title>
+    <link rel="stylesheet" href="CSS/forms.css">
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="//cdn.jsdelivr.net/npm/globe.gl"></script>
+</head>
+<body>
+    <div class="stars"></div>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <a href="index.html" style="text-decoration: none;"><h2>Hillary Medeiros</h2></a>
+            </div>
+            <div class="navbar-menu">
+                <div style="display:flex; align-items:center; gap:16px;">
+                    <a href="frmCidade.html" class="nav-link" style="padding:8px 12px; display:inline-block;">Cadastrar Cidade</a>
+                    <div class="dropdown" style="position:relative;">
+                        <button class="dropdown-btn" style="padding:8px 12px;">Visualizar ▼</button>
+                        <div class="dropdown-content" style="position:absolute; top:100%; left:0; margin-top:8px;">
+                            <a href="Visualizar_Paises.html">Países</a>
+                            <a href="Visualizar.html">Cidades</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="hero-section">
+            <h1 class="main-title">Editar País</h1>
+
+            <form id="formPais" class="form-cadastro">
+                <input type="hidden" id="id_Pais" name="id_Pais">
+
+                <div class="form-group">
+                    <label for="nome_Pais">Nome do País</label>
+                    <input type="text" id="nome_Pais" name="nome_Pais" required placeholder="Digite o nome do país">
+                </div>
+
+                <div class="form-group">
+                    <label for="populacao_Pais">População</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-adjust" id="decrease"><i class="bi bi-dash"></i></button>
+                        <input type="number" id="populacao_Pais" name="populacao_Pais" required placeholder="Ex: 100000000" min="0" step="1" value="0">
+                        <button type="button" class="btn-adjust" id="increase"><i class="bi bi-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="idioma_Pais">Idioma</label>
+                    <input type="text" id="idioma_Pais" name="idioma_Pais" required placeholder="Digite o idioma principal">
+                </div>
+
+                <input type="hidden" id="capital_Pais" name="capital_Pais">
+                <input type="hidden" id="moeda_Pais" name="moeda_Pais">
+                <input type="hidden" id="bandeira_Pais" name="bandeira_Pais">
+                <div class="form-group">
+                    <label for="id_Continente">Continente</label>
+                    <select id="id_Continente" name="id_Continente" required>
+                        <option value="">Carregando continentes...</option> 
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn-enviar">Salvar Alterações</button>
+            </form>
+
+            <div class="globe-container">
+                <div id="globeViz"></div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+
+    <script>
+        // Variável de estado para saber se a busca da API terminou
+        let apiDataReady = false; 
+        
+        // Função para obter o ID do país da URL
+        function getPaisIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        // Carregar continentes
+        async function carregarContinentes(idContinenteSelecionado = null) {
+            try {
+                // Endpoint modificado para usar Editar_Pais.php
+                const response = await fetch("Editar_Pais.php?action=continentes");
+                const continentes = await response.json();
+
+                const select = document.getElementById("id_Continente");
+                select.innerHTML = '<option value="">Selecione o continente</option>';
+
+                continentes.forEach(cont => {
+                    const option = document.createElement("option");
+                    option.value = cont.id_Continente;
+                    option.textContent = cont.nome_Continente;
+                    if (idContinenteSelecionado && cont.id_Continente == idContinenteSelecionado) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Erro ao carregar continentes:", error);
+                const select = document.getElementById("id_Continente");
+                select.innerHTML = '<option value="">Erro ao carregar continentes</option>';
+            }
+        }
+
+        // Função para buscar dados complementares do país pela API Rest Countries
+        async function buscarDadosPais() {
+            // Reinicia o estado
+            apiDataReady = false;
+            
+            const nomePais = document.getElementById('nome_Pais').value.trim();
+            
+            // Limpar campos ocultos (em caso de falha na busca ou nome vazio)
+            document.getElementById('capital_Pais').value = '';
+            document.getElementById('moeda_Pais').value = '';
+            document.getElementById('bandeira_Pais').value = '';
+
+            if (!nomePais) {
+                // Se o nome está vazio, a busca terminou (com campos vazios)
+                apiDataReady = true;
+                return;
+            }
+
+            try {
+                // Chamar a API Rest Countries via o novo endpoint em Editar_Pais.php
+                const response = await fetch(`Editar_Pais.php?action=dados_pais&pais=${encodeURIComponent(nomePais)}`);
+                
+                if (!response.ok) {
+                    throw new Error('Falha na requisição ao endpoint PHP.');
+                }
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    console.warn('Aviso:', result.message);
+                    // Os campos já foram limpos no início da função
+                } else {
+                    const data = result.data;
+                    // Preencher os campos ocultos com os dados retornados
+                    document.getElementById('capital_Pais').value = data.capital_Pais || '';
+                    document.getElementById('moeda_Pais').value = data.moeda_Pais || '';
+                    document.getElementById('bandeira_Pais').value = data.bandeira_Pais_url || '';
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados do país:', error);
+                // Os campos já foram limpos no início da função
+            } finally {
+                // Marca que a busca assíncrona terminou
+                apiDataReady = true; 
+            }
+        }
+
+        // Carregar dados do país para edição
+        async function carregarDadosPais(idPais) {
+            try {
+                // Endpoint modificado para usar Editar_Pais.php
+                const response = await fetch(`Editar_Pais.php?action=pais&id=${idPais}`);
+                if (!response.ok) {
+                    throw new Error("Falha ao carregar dados do país.");
+                }
+                const pais = await response.json();
+
+                // Preencher o formulário
+                document.getElementById('id_Pais').value = pais.id_Pais;
+                document.getElementById('nome_Pais').value = pais.nome_Pais;
+                document.getElementById('populacao_Pais').value = pais.populacao_Pais;
+                document.getElementById('idioma_Pais').value = pais.idioma_Pais;
+                
+                // Preencher os dados existentes da API (se houver)
+                document.getElementById('capital_Pais').value = pais.capital_Pais || '';
+                document.getElementById('moeda_Pais').value = pais.moeda_Pais || '';
+                document.getElementById('bandeira_Pais').value = pais.bandeira_Pais_url || '';
+
+                // Carregar continentes e selecionar o continente correto
+                await carregarContinentes(pais.id_Continente);
+                
+                // Após carregar os dados, tenta buscar os dados da API para garantir que estão atualizados
+                // E espera a conclusão para definir apiDataReady = true
+                await buscarDadosPais();
+
+            } catch (error) {
+                console.error("Erro ao carregar dados para edição:", error);
+                alert("Erro ao carregar dados do país para edição.");
+            }
+        }
+
+        // Adicionar evento de blur no campo de nome do país para buscar dados
+        document.getElementById('nome_Pais').addEventListener('blur', buscarDadosPais);
+        document.getElementById('nome_Pais').addEventListener('change', buscarDadosPais);
+
+        // enviar formulário pro php (agora para edição)
+        document.getElementById("formPais").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            // Chama a busca da API novamente e espera (garante a atualização imediata)
+            await buscarDadosPais(); 
+
+            if (!apiDataReady) {
+                alert("Aguarde a conclusão da busca de dados complementares da API antes de salvar.");
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            
+            // Endpoint de edição (Editar_Pais.php)
+            const response = await fetch("Editar_Pais.php", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.text();
+            alert(result);
+            // Redireciona para a página de visualização após a edição
+            if (result.includes("sucesso")) {
+                // Assumindo que a página de visualização de países é Visualizar_Paises.html
+                window.location.href = "Visualizar_Paises.html";
+            }
+        });
+
+        // btn + e -
+        const input = document.getElementById('populacao_Pais');
+        const increase = document.getElementById('increase');
+        const decrease = document.getElementById('decrease');
+
+        increase.addEventListener('click', () => {
+            input.value = parseInt(input.value || 0) + 100000;
+        });
+
+        decrease.addEventListener('click', () => {
+            let value = parseInt(input.value || 0);
+            if (value > 0) input.value = value - 100000;
+        });
+
+        // Inicialização
+        const idPais = getPaisIdFromUrl();
+        if (idPais) {
+            carregarDadosPais(idPais);
+        } else {
+            // Se não houver ID, apenas carrega os continentes (caso de erro ou acesso direto)
+            carregarContinentes();
+            alert("ID do país não encontrado na URL. Acesso inválido para edição.");
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Mundo - Editar Cidade</title>
+    <link rel="stylesheet" href="CSS/forms.css">
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <script src="//cdn.jsdelivr.net/npm/globe.gl"></script>
+</head>
+<body>
+    <div class="stars"></div>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <a href="index.html" style="text-decoration: none;"><h2>Hillary Medeiros</h2></a>
+            </div>
+            <div class="navbar-menu">
+                <a href="frmPais.html" class="nav-link">Cadastrar País</a>
+                <div class="dropdown" style="position:relative;">
+                    <button class="dropdown-btn" style="padding:8px 12px;">Visualizar ▼</button>
+                    <div class="dropdown-content" style="position:absolute; top:100%; left:0; margin-top:8px;">
+                        <a href="Visualizar_Paises.html">Países</a>
+                        <a href="Visualizar.html">Cidades</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="hero-section">
+            <h1 class="main-title">Editar Cidade</h1>
+
+            <form id="formCidade" class="form-cadastro">
+                <input type="hidden" id="id_Cidade" name="id_Cidade">
+
+                <div class="form-group">
+                    <label for="nome_Cidade">Nome da Cidade</label>
+                    <input type="text" id="nome_Cidade" name="nome_Cidade" required placeholder="Digite o nome da cidade">
+                </div>
+
+                <div class="form-group">
+                    <label for="populacao_Cidade">População</label>
+                    <div class="input-group">
+                        <button type="button" class="btn-adjust" id="decrease"><i class="bi bi-dash"></i></button>
+                        <input type="number" id="populacao_Cidade" name="populacao_Cidade" required placeholder="Ex: 1500000" min="0" step="1" value="0">
+                        <button type="button" class="btn-adjust" id="increase"><i class="bi bi-plus"></i></button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_Pais">País</label>
+                    <select id="id_Pais" name="id_Pais" required>
+                        <option value="">Carregando países...</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-enviar">Salvar Alterações</button>
+            </form>
+
+            <div class="globe-container">
+                <div id="globeViz"></div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+
+    <script>
+        // Variável de estado para saber se a busca da API terminou
+        let apiDataReady = false; 
+
+        // Função para obter o ID da cidade da URL
+        function getCidadeIdFromUrl() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+        // Carregar os países
+        async function carregarPaises(idPaisSelecionado = null) {
+            try {
+                // Endpoint modificado para usar Editar_Cidade.php
+                const response = await fetch("Editar_Cidade.php?action=paises");
+                const paises = await response.json();
+
+                const select = document.getElementById("id_Pais");
+                select.innerHTML = '<option value="">Selecione o país</option>';
+
+                paises.forEach(pais => {
+                    const option = document.createElement("option");
+                    option.value = pais.id_Pais;
+                    option.textContent = pais.nome_Pais;
+                    if (idPaisSelecionado && pais.id_Pais == idPaisSelecionado) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error("Erro ao carregar países:", error);
+                const select = document.getElementById("id_Pais");
+                select.innerHTML = '<option value="">Erro ao carregar países</option>';
+            }
+        }
+
+        // Função para buscar dados de clima da cidade pela API OpenWeather
+        async function buscarDadosCidade() {
+            // Reinicia o estado
+            apiDataReady = false;
+            
+            const nomeCidade = document.getElementById('nome_Cidade').value.trim();
+            
+            if (!nomeCidade) {
+                // Se o nome está vazio, a busca terminou
+                apiDataReady = true;
+                return;
+            }
+
+            try {
+                // Chamar a API OpenWeather via o novo endpoint em Editar_Cidade.php
+                const response = await fetch(`Editar_Cidade.php?action=dados_cidade&cidade=${encodeURIComponent(nomeCidade)}`);
+                
+                if (!response.ok) {
+                    throw new Error('Falha na requisição ao endpoint PHP.');
+                }
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    console.warn('Aviso:', result.message);
+                } else {
+                    const data = result.data;
+                    // O campo de clima foi removido do formulário, então apenas logamos
+                    console.log('Clima da cidade encontrado:', data.clima_Cidade);
+                    // Se o campo existisse, seria preenchido aqui.
+                }
+            } catch (error) {
+                console.error('Erro ao buscar dados de clima:', error);
+            } finally {
+                // Marca que a busca assíncrona terminou
+                apiDataReady = true; 
+            }
+        }
+
+        // Carregar dados da cidade para edição
+        async function carregarDadosCidade(idCidade) {
+            try {
+                // Endpoint modificado para usar Editar_Cidade.php
+                const response = await fetch(`Editar_Cidade.php?action=cidade&id=${idCidade}`);
+                if (!response.ok) {
+                    throw new Error("Falha ao carregar dados da cidade.");
+                }
+                const cidade = await response.json();
+
+                // Preencher o formulário
+                document.getElementById('id_Cidade').value = cidade.id_Cidade;
+                document.getElementById('nome_Cidade').value = cidade.nome_Cidade;
+                document.getElementById('populacao_Cidade').value = cidade.populacao_Cidade;
+                
+                // Carregar países e selecionar o país correto
+                await carregarPaises(cidade.id_Pais);
+
+                // Após carregar os dados, tenta buscar o clima e espera a conclusão
+                await buscarDadosCidade();
+
+            } catch (error) {
+                console.error("Erro ao carregar dados para edição:", error);
+                alert("Erro ao carregar dados da cidade para edição.");
+            }
+        }
+
+        // Adicionar evento de blur no campo de nome da cidade para buscar dados
+        document.getElementById('nome_Cidade').addEventListener('blur', buscarDadosCidade);
+        document.getElementById('nome_Cidade').addEventListener('change', buscarDadosCidade);
+
+        // enviar formulário pro php (agora para edição)
+        document.getElementById("formCidade").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            
+            // Chama a busca da API novamente e espera (garante a atualização imediata)
+            await buscarDadosCidade();
+
+            if (!apiDataReady) {
+                alert("Aguarde a conclusão da busca de dados complementares da API antes de salvar.");
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            
+            // Endpoint de edição (Editar_Cidade.php)
+            const response = await fetch("Editar_Cidade.php", {
+                method: "POST",
+                body: formData
+            });
+
+            const result = await response.text();
+            alert(result);
+            // Redireciona para a página de visualização após a edição
+            if (result.includes("sucesso")) {
+                // Assumindo que a página de visualização de cidades é Visualizar.html
+                window.location.href = "Visualizar.html";
+            }
+        });
+
+        // btn + e -
+        const input = document.getElementById('populacao_Cidade');
+        const increase = document.getElementById('increase');
+        const decrease = document.getElementById('decrease');
+
+        increase.addEventListener('click', () => {
+            input.value = parseInt(input.value || 0) + 1000;
+        });
+
+        decrease.addEventListener('click', () => {
+            let value = parseInt(input.value || 0);
+            if (value > 0) input.value = value - 1000;
+        });
+
+        // Inicialização
+        const idCidade = getCidadeIdFromUrl();
+        if (idCidade) {
+            carregarDadosCidade(idCidade);
+        } else {
+            // Se não houver ID, apenas carrega os países (caso de erro ou acesso direto)
+            carregarPaises();
+            alert("ID da cidade não encontrado na URL. Acesso inválido para edição.");
+        }
+    </script>
+</body>
+</html>

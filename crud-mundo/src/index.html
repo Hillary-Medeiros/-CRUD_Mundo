@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD Mundo - Hillary Medeiros</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="CSS/style.css">
     <script src="//cdn.jsdelivr.net/npm/globe.gl"></script>
 </head>
 <body>
@@ -25,6 +25,13 @@
                         <a href="frmCidade.html">Cidade</a>
                     </div>
                 </div>
+                <div class="dropdown">
+                    <button class="dropdown-btn">Visualizar ▼</button>
+                    <div class="dropdown-content">
+                        <a href="Visualizar_paises.html">Países</a>
+                        <a href="Visualizar.html">Cidades</a>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -33,15 +40,15 @@
     <main class="main-content">
         <div class="hero-section">
             <h1 class="main-title">CRUD MUNDO</h1>
-            <a href="Visualizar.html" class="nav-link" style="z-index: 999; display: inline-block; padding: 10px 20px; font-size: 20px; border-radius: 8px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); color: #fff; text-decoration: none; transition: 0.3s;">
-            Visualizar Todos ▶︎</a>
+            <a href="Visualizar_Estatisticas.html" class="nav-link" style="z-index: 999; display: inline-block; padding: 10px 20px; font-size: 20px; border-radius: 8px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); color: #fff; text-decoration: none; transition: 0.3s;">
+            Visualizar Estatísticas ▶︎</a>
             <div class="globe-container">
                 <div id="globeViz"></div>
             </div>
         </div>
     </main>
 
-    <script type="module" src="main.js"></script>
+    <script type="module" src="js/main.js"></script>
 
 </body>
 </html>

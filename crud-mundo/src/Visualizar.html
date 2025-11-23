@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD Mundo - Visualizar Cidades</title>
-    <link rel="stylesheet" href="forms.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="CSS/forms.css">
+    <link rel="stylesheet" href="CSS/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="//cdn.jsdelivr.net/npm/globe.gl"></script>
 </head>
@@ -41,11 +41,11 @@
                 <table id="tabelaCidades">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Nome da Cidade</th>
                             <th>População</th>
                             <th>País</th>
                             <th>Clima</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -60,7 +60,7 @@
         </div>
     </main>
 
-    <script type="module" src="main.js"></script>
+    <script type="module" src="js/main.js"></script>
 
     <script>
         async function carregarCidades() {
@@ -100,11 +100,14 @@
                     const populacaoFormatada = new Intl.NumberFormat('pt-BR').format(cidade.populacao_Cidade);
                     
                     row.innerHTML = `
-                        <td>${cidade.id_Cidade}</td>
                         <td>${cidade.nome_Cidade}</td>
                         <td>${populacaoFormatada}</td>
                         <td>${cidade.nome_Pais}</td>
                         <td id="clima-${cidade.id_Cidade}">Carregando...</td>
+                        <td>
+                            <a href="frmEditarCidade.html?id=${cidade.id_Cidade}" ><i class="bi bi-pencil-square" title="Editar" style="color: white;"></"></i></a>  
+                            <a href="Excluir_Cidade.php?id_Cidade=${cidade.id_Cidade}"><i class="bi bi-trash" title="Deletar" style="margin-left:10px; color: white;"></i></a>   
+                        </td>
                     `;
                     tbody.appendChild(row);
 

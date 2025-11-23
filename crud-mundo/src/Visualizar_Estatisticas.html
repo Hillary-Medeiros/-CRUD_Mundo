@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estatísticas - CRUD Mundo</title>
+    <link rel="stylesheet" href="CSS/style.css">
+    <link rel="stylesheet" href="CSS/podio.css"> 
+    <script src="//cdn.jsdelivr.net/npm/globe.gl"></script>
+    <style>
+            body{
+                overflow-y: hidden !important; 
+                overflow: hidden !important; 
+                height: 100vh !important;
+            }
+
+            .main-content {
+                min-height: 100vh;
+                padding-bottom: 50px; 
+            }
+    </style>
+</head>
+<body>
+    <div class="stars"></div>
+
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="navbar-brand">
+                <a href="index.html" style="text-decoration: none;"><h2>Hillary Medeiros</h2></a>
+            </div>
+            <div class="navbar-menu">
+                <div class="dropdown">
+                    <button class="dropdown-btn">Cadastrar ▼</button>
+                    <div class="dropdown-content">
+                        <a href="frmPais.html">País</a>
+                        <a href="frmCidade.html">Cidade</a>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="dropdown-btn">Visualizar ▼</button>
+                    <div class="dropdown-content">
+                        <a href="Visualizar_paises.html">Países</a>
+                        <a href="Visualizar.html">Cidades</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="hero-section">
+            <h1 class="main-title" style="margin-bottom: 50px; margin-top: 50px; font-size: 3rem;">Estatísticas do Mundo</h1>
+            
+            <section class="podio-section" style="z-index: 999;">
+                <div class="podio-container">
+                    <h2 class="podio-title">🌍 Países Mais Populosos</h2>
+                    <div class="podio" id="podioPaisesMais">
+                        <div class="loading">Carregando dados...</div>
+                    </div>
+                </div>
+
+                <div class="podio-container">
+                    <h2 class="podio-title">🏢 Cidades Mais Populosas</h2>
+                    <div class="podio" id="podioCidadesMais">
+                        <div class="loading">Carregando dados...</div>
+                    </div>
+                </div>
+
+                <hr class="separator">
+
+                <div class="podio-container">
+                    <h2 class="podio-title">🌍 Países Menos Populosos</h2>
+                    <div class="podio" id="podioPaisesMenos">
+                        <div class="loading">Carregando dados...</div>
+                    </div>
+                </div>
+
+                <div class="podio-container">
+                    <h2 class="podio-title"> 🏢 Cidades Menos Populosas</h2>
+                    <div class="podio" id="podioCidadesMenos">
+                        <div class="loading">Carregando dados...</div>
+                    </div>
+                </div>
+            </section>
+            <div class="globe-container">
+                <div id="globeViz"></div>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+
+    <script>
+        // Função para formatar números com separador de milhares
+        const formatarPopulacao = (populacao) => {
+            return populacao.toLocaleString('pt-BR');
+        };
+
+        // Função para criar um item do pódio
+        const criarItemPodio = (rank, nome, populacao) => {
+            return `
+                <div class="podio-item rank-${rank}">
+                    <div class="rank-number">${rank}°</div>
+                    <div class="item-details">
+                        <div class="item-name">${nome}</div>
+                        <div class="item-populacao">${formatarPopulacao(populacao)} habitantes</div>
+                    </div>
+                </div>
+            `;
+        };
+
+        // Função principal para buscar e exibir os dados
+        const carregarEstatisticas = async () => {
+            const url = 'estatisticas_dados.php';
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`Erro HTTP: ${response.status}`);
+                }
+                const dados = await response.json();
+
+                // Referências aos contêineres
+                const podioPaisesMais = document.getElementById('podioPaisesMais');
+                const podioCidadesMais = document.getElementById('podioCidadesMais');
+                const podioPaisesMenos = document.getElementById('podioPaisesMenos');
+                const podioCidadesMenos = document.getElementById('podioCidadesMenos');
+
+                // Limpa o conteúdo de loading
+                podioPaisesMais.innerHTML = '';
+                podioCidadesMais.innerHTML = '';
+                podioPaisesMenos.innerHTML = '';
+                podioCidadesMenos.innerHTML = '';
+
+                // Preenche o Pódio de Países Mais Populosos
+                dados.paises_mais.forEach((pais, index) => {
+                    podioPaisesMais.innerHTML += criarItemPodio(index + 1, pais.nome_Pais, pais.populacao_Pais);
+                });
+
+                // Preenche o Pódio de Cidades Mais Populosas
+                dados.cidades_mais.forEach((cidade, index) => {
+                    podioCidadesMais.innerHTML += criarItemPodio(index + 1, cidade.nome_Cidade, cidade.populacao_Cidade);
+                });
+
+                // Preenche o Pódio de Países Menos Populosos
+                dados.paises_menos.forEach((pais, index) => {
+                    // O item de menor população é o 1º no pódio decrescente
+                    podioPaisesMenos.innerHTML += criarItemPodio(index + 1, pais.nome_Pais, pais.populacao_Pais);
+                });
+
+                // Preenche o Pódio de Cidades Menos Populosas
+                dados.cidades_menos.forEach((cidade, index) => {
+                    // O item de menor população é o 1º no pódio decrescente
+                    podioCidadesMenos.innerHTML += criarItemPodio(index + 1, cidade.nome_Cidade, cidade.populacao_Cidade);
+                });
+
+            } catch (error) {
+                console.error("Erro ao buscar estatísticas:", error);
+                // Exibe uma mensagem de erro simples
+                document.getElementById('podioPaisesMais').innerHTML = '<div class="error-message">Erro ao carregar dados.</div>';
+                document.getElementById('podioCidadesMais').innerHTML = '<div class="error-message">Erro ao carregar dados.</div>';
+                document.getElementById('podioPaisesMenos').innerHTML = '<div class="error-message">Erro ao carregar dados.</div>';
+                document.getElementById('podioCidadesMenos').innerHTML = '<div class="error-message">Erro ao carregar dados.</div>';
+            }
+        };
+
+        // Executa a função ao carregar a página
+        document.addEventListener('DOMContentLoaded', carregarEstatisticas);
+    </script>
+</body>
+</html>

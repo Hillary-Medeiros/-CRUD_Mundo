@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRUD Mundo - Visualizar Países</title>
-    <link rel="stylesheet" href="forms.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="CSS/forms.css">
+    <link rel="stylesheet" href="CSS/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <script src="//cdn.jsdelivr.net/npm/globe.gl"></script>
 </head>
@@ -35,13 +35,12 @@
     <main class="main-content">
         <div class="hero-section">
             <h1 class="main-title">Visualizar Países</h1>
-            <a href="Visualizar.html" class="nav-link" style="z-index: 999; display: inline-block; padding: 10px 20px; font-size: 20px; border-radius: 8px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); color: #fff; text-decoration: none; transition: 0.3s;">
+            <a href="Visualizar.html" class="nav-link" style="z-index: 999; display: inline-block; padding: 10px 20px; font-size: 20px; border-radius: 8px; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(8px); color: #fff; text-decoration: none; transition: 0.3s; margin-bottom: 5px;">
             Visualizar Cidades ▶︎</a>
             <div id="tabelaContainer" class="table-container" style="z-index: 999;">
                 <table id="tabelaPaises">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>País</th>
                             <th>Bandeira</th>
                             <th>Capital</th>
@@ -49,6 +48,7 @@
                             <th>População</th>
                             <th>Idioma</th>
                             <th>Continente</th>
+                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -63,7 +63,7 @@
         </div>
     </main>
 
-    <script type="module" src="main.js"></script>
+    <script type="module" src="js/main.js"></script>
 
     <script>
         async function carregarPaises() {
@@ -101,7 +101,6 @@
                         : 'N/A';
 
                     row.innerHTML = `
-                        <td>${pais.id_Pais}</td>
                         <td>${pais.nome_Pais}</td>
                         <td>${bandeiraHtml}</td>
                         <td>${pais.capital_Pais || 'N/A'}</td>
@@ -109,6 +108,10 @@
                         <td>${populacaoFormatada}</td>
                         <td>${pais.idioma_Pais}</td>
                         <td>${pais.nome_Continente}</td>
+                        <td>
+                            <a href="frmEditarPais.html?id=${pais.id_Pais}"><i class="bi bi-pencil-square" title="Editar" style="color: white;"></i></a>  
+                            <a href="Excluir_Pais.php?id_Pais=${pais.id_Pais}"><i class="bi bi-trash" title="Deletar" style="margin-left:10px; color: white;"></i></a>  
+                        </td>
                     `;
                     tbody.appendChild(row);
                 });

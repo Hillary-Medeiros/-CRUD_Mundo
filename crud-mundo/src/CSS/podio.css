@@ -1,0 +1,125 @@
+body {
+    overflow-y: hidden !important; 
+    overflow: hidden !important; 
+    height: 100vh !important; 
+}
+
+.main-content {
+    min-height: 100vh;
+    padding-bottom: 50px; 
+}
+
+/* Seção principal dos pódios */
+.podio-section {
+    display: flex;
+    flex-wrap: wrap; 
+    justify-content: center;
+    gap: 15px; /* Reduzindo mais o espaço entre os pódios */
+    padding: 10px; 
+    width: 100%; /* Ocupa a largura total do container pai */
+    max-width: 1100px; /* Levemente reduzido */
+    margin: 0 auto;
+}
+
+/* Contêiner de cada pódio (País/Cidade, Mais/Menos) */
+.podio-container {
+    flex-basis: 48%; 
+    min-width: 200px; /* Reduzido o mínimo para telas menores */
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 10px; /* Levemente arredondado */
+    padding: 10px; /* Reduzido o padding interno */
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+}
+
+.podio-title {
+    color: #fff;
+    text-align: center;
+    margin-bottom: 10px; 
+    font-size: 1.4em; /* Reduzido o tamanho da fonte */
+    border-bottom: 2px solid #57a8d8;
+    padding-bottom: 5px;
+}
+
+/* Contêiner do Pódio */
+.podio {
+    display: flex;
+    flex-direction: column;
+    gap: 8px; /* Reduzido o espaço entre os itens */
+}
+
+/* Item individual do Pódio */
+.podio-item {
+    display: flex;
+    align-items: center;
+    padding: 8px; /* Reduzido o padding */
+    border-radius: 5px;
+    color: #000;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* Estilos específicos para cada posição */
+.rank-1 {
+    background: linear-gradient(135deg, #FFD700, #DAA520); /* Ouro */
+    font-size: 1em; /* Reduzido o tamanho da fonte */
+    padding: 10px;
+    order: 1; 
+}
+
+.rank-2 {
+    background: linear-gradient(135deg, #C0C0C0, #A9A9A9); /* Prata */
+    font-size: 0.9em; /* Mais redução */
+    order: 2;
+}
+
+.rank-3 {
+    background: linear-gradient(135deg, #CD7F32, #B87333); /* Bronze */
+    font-size: 0.9em; /* Mais redução */
+    order: 3;
+}
+
+/* Número da Posição */
+.rank-number {
+    font-size: 1.5em; /* Reduzido o tamanho da fonte */
+    font-weight: bold;
+    margin-right: 8px;
+    min-width: 30px;
+    text-align: center;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+/* Detalhes (Nome e População) */
+.item-details {
+    flex-grow: 1;
+    word-wrap: break-word; 
+    line-height: 1.2; /* Ajuste para espaçamento entre linhas */
+}
+
+.item-name {
+    font-weight: bold;
+    font-size: 0.9em; /* Reduzido o tamanho da fonte */
+    white-space: nowrap; /* Evita quebra de linha no nome se possível */
+    overflow: hidden;
+    text-overflow: ellipsis; /* Adiciona '...' se o nome for muito longo */
+}
+
+.item-populacao {
+    font-size: 0.75em; /* Reduzido o tamanho da fonte para a população */
+    opacity: 0.8;
+}
+
+/* Separador entre os pódios Mais e Menos */
+.separator {
+    width: 95%;
+    height: 1px;
+    background-color: #57a8d8;
+    border: none;
+    margin: 20px 0; 
+    flex-basis: 100%; 
+}
+
+/* Estilo para a mensagem de carregamento/erro */
+.loading, .error-message {
+    text-align: center;
+    color: #aaa;
+    padding: 10px;
+}
